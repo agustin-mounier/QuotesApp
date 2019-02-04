@@ -6,7 +6,18 @@ import com.example.quotes.views.QuotesFeedView
 
 class QuotesFeedPresenter: BasePresenter<QuotesFeedView>() {
 
-    fun fetchQuotes() {
-        QuotesManager.getQuotes(successCallback = mView!!::showQuotes, errorCallback = mView!!::showError)
+    private val tags : MutableList<String> = mutableListOf()
+    private var rand : String = "0"
+
+    fun fetchQuotes(page: Int = 0) {
+        QuotesManager.getQuotes(rand = rand, offset = page * QuotesManager.quotesCount, tags = tags,
+            successCallback = mView!!::showQuotes, errorCallback = mView!!::showError)
+    }
+
+    fun explore() {
+        rand = "t"
+        tags.clear()
+        mView!!.setToolbarTitle("Explore")
+        mView!!.resetQuotesFeed()
     }
 }

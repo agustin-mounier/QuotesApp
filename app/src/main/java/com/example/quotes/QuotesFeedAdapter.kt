@@ -10,7 +10,7 @@ class QuotesFeedAdapter: RecyclerView.Adapter<QuoteViewHolder>() {
     private var quotes: MutableList<Quote> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuoteViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.quote_card_view, parent)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.quote_card_view, parent, false)
         return QuoteViewHolder(view)
     }
 
@@ -24,5 +24,9 @@ class QuotesFeedAdapter: RecyclerView.Adapter<QuoteViewHolder>() {
 
     fun addQuotes(quotesToAdd: List<Quote>) {
         quotes.addAll(quotesToAdd)
+    }
+
+    fun clearQuotes() {
+        quotes.clear()
     }
 }

@@ -9,7 +9,7 @@ import io.reactivex.schedulers.Schedulers
 
 object QuotesManager : AbstractManager<OpinionatedQuotesService>() {
 
-    private val quotesCount = 10
+    val quotesCount = 10
 
     override val baseUrl: String
         get() = "https://opinionated-quotes-api.gigalixirapp.com/"

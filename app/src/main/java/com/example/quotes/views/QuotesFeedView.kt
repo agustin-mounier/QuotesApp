@@ -8,4 +8,8 @@ interface QuotesFeedView: BaseViewInterface {
     fun showQuotes(quotes: List<Quote>)
 
     fun showError(errorMessage: String)
+
+    fun resetQuotesFeed()
+
+    fun setToolbarTitle(title: String)
 }

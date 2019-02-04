@@ -1,50 +1,40 @@
 package com.example.quotes
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
-import android.view.Menu
+import android.support.v7.widget.LinearLayoutManager
 import android.view.MenuItem
 import android.widget.Toast
-import com.example.quotes.managers.QuotesManager
 import com.example.quotes.models.Quote
-import com.example.quotes.models.QuotesResponse
 import com.example.quotes.mvp.BaseActivity
 import com.example.quotes.presenters.QuotesFeedPresenter
-import com.example.quotes.services.OpinionatedQuotesService
 import com.example.quotes.views.QuotesFeedView
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.ArrayList
+
 
 class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
     NavigationView.OnNavigationItemSelectedListener, QuotesFeedView {
+
+    companion object {
+        private const val TAG_SELECTION_RC: Int = 1
+    }
+
+    private lateinit var scrollListener: InfiniteScrollViewListener
+    private var tags = HashSet<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show()
-        }
-
-        val toggle = ActionBarDrawerToggle(
-            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-        )
-
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        nav_view.setNavigationItemSelectedListener(this)
-
-        mPresenter.fetchQuotes()
-        quotes_feed.adapter = QuotesFeedAdapter()
+        initNavigationDrawer()
+        initFeed()
     }
 
     override fun instantiatePresenter() {
@@ -52,11 +42,26 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
     }
 
     override fun showQuotes(quotes: List<Quote>) {
-        (quotes_feed.adapter as QuotesFeedAdapter).addQuotes(quotes)
+        val quotesFeedAdapter = quotes_feed.adapter as QuotesFeedAdapter
+        quotesFeedAdapter.addQuotes(quotes)
+        quotesFeedAdapter.notifyDataSetChanged()
+        quotes.forEach { tags.addAll(it.tags) }
     }
 
     override fun showError(errorMessage: String) {
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
+    }
+
+    override fun resetQuotesFeed() {
+        scrollListener.resetState()
+        val quotesFeedAdapter = quotes_feed.adapter as QuotesFeedAdapter
+        quotesFeedAdapter.clearQuotes()
+        quotesFeedAdapter.notifyDataSetChanged()
+        mPresenter.fetchQuotes()
+    }
+
+    override fun setToolbarTitle(title: String) {
+        toolbar.title = title
     }
 
     override fun onBackPressed() {
@@ -67,46 +72,54 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        menuInflater.inflate(R.menu.main, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == TAG_SELECTION_RC) {
+            if (resultCode == Activity.RESULT_OK) {
+                //TODO
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //TODO
+            }
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
+            R.id.explore -> {
+                mPresenter.explore()
             }
-            R.id.nav_gallery -> {
-
+            R.id.tags -> {
+                val intent = Intent(this, TagSelectionActivity::class.java)
+                intent.putStringArrayListExtra("TAG_LIST", tags.toList() as ArrayList<String>?)
+                startActivityForResult(intent, TAG_SELECTION_RC)
             }
-            R.id.nav_slideshow -> {
-
-            }
-            R.id.nav_manage -> {
-
-            }
-            R.id.nav_share -> {
-
-            }
-            R.id.nav_send -> {
+            R.id.favorites -> {
 
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun initNavigationDrawer() {
+        val toggle = ActionBarDrawerToggle(
+            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        nav_view.setNavigationItemSelectedListener(this)
+    }
+
+    private fun initFeed() {
+        val layoutManager = LinearLayoutManager(this)
+        scrollListener = InfiniteScrollViewListener(layoutManager, mPresenter::fetchQuotes)
+
+        quotes_feed.layoutManager = layoutManager
+        quotes_feed.addOnScrollListener(scrollListener)
+        quotes_feed.adapter = QuotesFeedAdapter()
+        mPresenter.fetchQuotes()
     }
 }
