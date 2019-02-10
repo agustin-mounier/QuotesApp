@@ -75,10 +75,8 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == TAG_SELECTION_RC) {
             if (resultCode == Activity.RESULT_OK) {
-                //TODO
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                //TODO
+                val tags = data!!.getStringArrayListExtra(TagSelectionActivity.TAGS_EXTRA)
+                mPresenter.resetFeedWithTags(tags)
             }
         }
     }

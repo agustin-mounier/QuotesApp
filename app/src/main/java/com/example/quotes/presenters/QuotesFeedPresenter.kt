@@ -14,6 +14,11 @@ class QuotesFeedPresenter: BasePresenter<QuotesFeedView>() {
             successCallback = mView!!::showQuotes, errorCallback = mView!!::showError)
     }
 
+    fun resetFeedWithTags(tags: List<String>) {
+        this.tags.addAll(tags)
+        mView!!.resetQuotesFeed()
+    }
+
     fun explore() {
         rand = "t"
         tags.clear()
