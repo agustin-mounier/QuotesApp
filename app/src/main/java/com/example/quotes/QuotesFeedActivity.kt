@@ -23,6 +23,7 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
     NavigationView.OnNavigationItemSelectedListener, QuotesFeedView {
 
     companion object {
+        const val QUOTE_SELECTED_EXTRA = "quote_selected_extra"
         private const val TAG_SELECTION_RC: Int = 1
     }
 
