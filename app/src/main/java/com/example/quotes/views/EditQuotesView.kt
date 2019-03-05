@@ -6,4 +6,16 @@ import com.example.quotes.mvp.BaseViewInterface
 interface EditQuotesView: BaseViewInterface {
 
     fun setUp(quote: Quote)
+
+    fun setUpFontOptions(fonts: Array<String>)
+
+    fun setUpBackgroundOptions(backgrounds: Array<String>)
+
+    fun setUpTextOptions(textStyles: Map<String, Int>, textAlignments: Map<String, Int>)
+
+    fun setUpColorOptions(colors: Array<String>)
+
+    fun setUpSizeOptions()
+
+    fun removeCurrentOptions()
 }

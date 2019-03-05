@@ -14,4 +14,11 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
+    <style name="EditOption">
+        <item name="android:background">@drawable/radio_button_option_background</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:layout_margin">4dp</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>
