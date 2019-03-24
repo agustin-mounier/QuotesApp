@@ -30,8 +30,8 @@ class TagSelectionActivity: BaseActivity<TagSelectionView, TagSelectionPresenter
         init()
     }
 
-    override fun instantiatePresenter() {
-        mPresenter = TagSelectionPresenter()
+    override fun createPresenter(): TagSelectionPresenter {
+        return TagSelectionPresenter()
     }
 
     override fun addSelectedTag(tag: String) {

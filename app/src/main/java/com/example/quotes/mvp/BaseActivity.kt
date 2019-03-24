@@ -4,14 +4,14 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 
-abstract class BaseActivity<in V : BaseViewInterface, T : BasePresenterInterface<V>>
+abstract class BaseActivity<V : BaseViewInterface, T : BasePresenter<V>>
     : AppCompatActivity(), BaseViewInterface {
 
     protected lateinit var mPresenter: T
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        instantiatePresenter()
+        mPresenter = createPresenter()
         mPresenter.attachView(this as V)
     }
 
@@ -22,5 +22,5 @@ abstract class BaseActivity<in V : BaseViewInterface, T : BasePresenterInterface
         mPresenter.detachView()
     }
 
-    abstract fun instantiatePresenter()
+    abstract fun createPresenter(): T
 }

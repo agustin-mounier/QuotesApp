@@ -22,32 +22,33 @@ import android.util.TypedValue
 import android.widget.SeekBar
 import android.widget.Toast
 
-
-
-
 class EditQuotesActivity : BaseActivity<EditQuotesView, EditQuotesPresenter>(), EditQuotesView {
 
-    override fun instantiatePresenter() {
-        mPresenter = EditQuotesPresenter()
+    companion object {
+        const val SAVE_QUOTE_ID = 10
+    }
+
+    override fun createPresenter(): EditQuotesPresenter {
+        return EditQuotesPresenter()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.edit_quotes_layout)
-        val quote = intent.getParcelableExtra<Quote>(QuotesDetailActivity.EDIT_QUOTE_EXTRA)
+        val quote = intent.getParcelableExtra<Quote>(QuotesFeedActivity.QUOTE_SELECTED_EXTRA)
         mPresenter.initActivty(quote)
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        menu!!.add(NONE, 1, NONE, "Save Quote")
+        menu!!.add(NONE, SAVE_QUOTE_ID, NONE, "Save Quote")
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         super.onOptionsItemSelected(item)
         when (item!!.itemId) {
-            1 -> {
+            SAVE_QUOTE_ID -> {
                 testSaveImage()
             }
         }

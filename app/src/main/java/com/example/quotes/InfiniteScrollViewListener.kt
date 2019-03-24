@@ -18,10 +18,17 @@ class InfiniteScrollViewListener(val mLayoutManager: LinearLayoutManager, privat
     // Sets the starting page index
     private val startingPageIndex = 0
 
+    private var enabled = true
+
     // This happens many times a second during a scroll, so be wary of the code you place here.
     // We are given a few useful parameters to help us work out if we need to load some more data,
     // but first we check if we are waiting for the previous load to finish.
     override fun onScrolled(view: RecyclerView?, dx: Int, dy: Int) {
+
+        if (!enabled) {
+            return
+        }
+
         var lastVisibleItemPosition = 0
         val totalItemCount = mLayoutManager.itemCount
         lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition()
@@ -67,4 +74,7 @@ class InfiniteScrollViewListener(val mLayoutManager: LinearLayoutManager, privat
         loadQuotes(page)
     }
 
+    fun setEnable(bool: Boolean) {
+        this.enabled = bool
+    }
 }

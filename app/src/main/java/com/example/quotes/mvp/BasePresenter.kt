@@ -1,14 +1,14 @@
 package com.example.quotes.mvp
 
-open class BasePresenter<V : BaseViewInterface> : BasePresenterInterface<V> {
+open class BasePresenter<V : BaseViewInterface> {
 
     protected var mView: V? = null
 
-    override fun attachView(view: V) {
+    fun attachView(view: V) {
         mView = view
     }
 
-    override fun detachView() {
+    fun detachView() {
         mView = null
     }
 }

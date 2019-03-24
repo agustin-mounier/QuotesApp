@@ -4,14 +4,15 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.quotes.models.Quote
+import com.example.quotes.presenters.QuotesFeedPresenter
 
-class QuotesFeedAdapter: RecyclerView.Adapter<QuoteViewHolder>() {
+class QuotesFeedAdapter(private val presenter: QuotesFeedPresenter): RecyclerView.Adapter<QuoteViewHolder>() {
 
-    private var quotes: MutableList<Quote> = mutableListOf()
+    private val quotes: MutableList<Quote> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuoteViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.quote_card_view, parent, false)
-        return QuoteViewHolder(view)
+        return QuoteViewHolder(view, presenter)
     }
 
     override fun getItemCount(): Int {

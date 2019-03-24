@@ -17,6 +17,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
 import java.util.ArrayList
+import kotlin.collections.HashSet
+import kotlin.collections.List
+import kotlin.collections.forEach
+import kotlin.collections.toList
 
 
 class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
@@ -38,8 +42,8 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
         initFeed()
     }
 
-    override fun instantiatePresenter() {
-        mPresenter = QuotesFeedPresenter()
+    override fun createPresenter(): QuotesFeedPresenter {
+        return QuotesFeedPresenter()
     }
 
     override fun showQuotes(quotes: List<Quote>) {
@@ -53,12 +57,10 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
         Toast.makeText(this, errorMessage, Toast.LENGTH_LONG).show()
     }
 
-    override fun resetQuotesFeed() {
+    override fun resetQuotesFeed(infiniteScrollEnabled: Boolean) {
         scrollListener.resetState()
-        val quotesFeedAdapter = quotes_feed.adapter as QuotesFeedAdapter
-        quotesFeedAdapter.clearQuotes()
-        quotesFeedAdapter.notifyDataSetChanged()
-        mPresenter.fetchQuotes()
+        scrollListener.setEnable(infiniteScrollEnabled)
+        (quotes_feed.adapter as QuotesFeedAdapter).clearQuotes()
     }
 
     override fun setToolbarTitle(title: String) {
@@ -93,12 +95,17 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
                 startActivityForResult(intent, TAG_SELECTION_RC)
             }
             R.id.favorites -> {
-
+                mPresenter.favoriteQuotes()
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onStop() {
+        mPresenter.saveFavorites()
+        super.onStop()
     }
 
     private fun initNavigationDrawer() {
@@ -118,7 +125,8 @@ class QuotesFeedActivity : BaseActivity<QuotesFeedView, QuotesFeedPresenter>(),
 
         quotes_feed.layoutManager = layoutManager
         quotes_feed.addOnScrollListener(scrollListener)
-        quotes_feed.adapter = QuotesFeedAdapter()
+        quotes_feed.adapter = QuotesFeedAdapter(mPresenter)
+        mPresenter.loadFavorites()
         mPresenter.fetchQuotes()
     }
 }

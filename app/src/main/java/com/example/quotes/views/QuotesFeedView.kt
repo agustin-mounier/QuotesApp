@@ -9,7 +9,7 @@ interface QuotesFeedView: BaseViewInterface {
 
     fun showError(errorMessage: String)
 
-    fun resetQuotesFeed()
+    fun resetQuotesFeed(infiniteScrollEnabled: Boolean = true)
 
     fun setToolbarTitle(title: String)
 }
